@@ -114,7 +114,7 @@ export default function LoginPage() {
         </div>
 
         {/* Tabs: Phone / Email */}
-        <Tabs defaultValue="phone" className="w-full">
+        <Tabs defaultValue="email" className="w-full">
           <TabsList className="grid w-full grid-cols-2 bg-white/5 border border-white/10">
             <TabsTrigger value="phone" className="data-[state=active]:bg-[#FF5722] data-[state=active]:text-white text-gray-400 gap-1.5">
               <Phone className="w-3.5 h-3.5" /> Phone
