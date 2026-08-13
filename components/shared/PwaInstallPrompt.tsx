@@ -9,8 +9,10 @@ export function PwaInstallPrompt() {
   const [showPrompt, setShowPrompt] = useState(false);
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+
     // Register Service Worker
-    if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+    if ('serviceWorker' in navigator) {
       navigator.serviceWorker
         .register('/sw.js')
         .then(() => console.log('GymSpot ServiceWorker Registered'))
