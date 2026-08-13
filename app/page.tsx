@@ -56,7 +56,7 @@ const LIVE_DEALS = [
 
 export default function HomePage() {
   const { city, isGpsAllowed, requestGpsLocation, setCity, loading: locLoading } = useLocationStore();
-  const { searchQuery, setSearchQuery } = useFilterStore();
+  const { searchQuery, setSearchQuery, radiusKm } = useFilterStore();
   const { data, isLoading, isError } = useNearbyGyms();
 
   const [viewMode, setViewMode] = useState<'grid' | 'map'>('grid');
@@ -188,7 +188,7 @@ export default function HomePage() {
             <h2 className="text-2xl font-syne font-bold text-white flex items-center gap-2">
               <Dumbbell className="w-6 h-6 text-[#FF5722]" /> Gyms Near You ({gymsList.length})
             </h2>
-            <p className="text-xs text-gray-400">Discover gyms within {useFilterStore.getState().radiusKm}km of your location</p>
+            <p className="text-xs text-gray-400">Discover gyms within {radiusKm}km of your location</p>
           </div>
 
           {/* Toggle Button */}
