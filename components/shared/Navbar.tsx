@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Dumbbell, Heart, User, LayoutDashboard, LogOut, Menu, Building2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -17,6 +18,7 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { useAuth } from '@/hooks/useAuth';
 
 export function Navbar() {
+  const router = useRouter();
   const { user, role, isLoggedIn, signOut, loading } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -67,10 +69,10 @@ export function Navbar() {
 
             {/* Profile Dropdown */}
             <DropdownMenu>
-              <DropdownMenuTrigger className="outline-none focus:ring-2 focus:ring-[#FF5722] rounded-full">
-                <Avatar className="w-9 h-9 border border-white/20">
+              <DropdownMenuTrigger className="outline-none focus:ring-2 focus:ring-[#FF5722] rounded-full cursor-pointer">
+                <Avatar className="w-9 h-9 border border-white/20 hover:border-[#FF5722] transition-colors cursor-pointer">
                   <AvatarImage src={user?.user_metadata?.avatar_url || ''} />
-                  <AvatarFallback className="bg-[#FF5722] text-white font-bold text-sm">
+                  <AvatarFallback className="bg-[#FF5722] text-white font-bold text-sm cursor-pointer">
                     {userInitial.toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
@@ -90,46 +92,36 @@ export function Navbar() {
 
                 {role === 'owner' ? (
                   <>
-                    <DropdownMenuItem>
-                      <Link href="/owner/dashboard" className="flex items-center gap-2 w-full text-gray-200 hover:text-white">
-                        <LayoutDashboard className="w-4 h-4 text-[#FF5722]" /> Owner Dashboard
-                      </Link>
+                    <DropdownMenuItem onClick={() => router.push('/owner/dashboard')} className="flex items-center gap-2 text-gray-200 hover:text-white cursor-pointer">
+                      <LayoutDashboard className="w-4 h-4 text-[#FF5722]" /> Owner Dashboard
                     </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <Link href="/owner/listing/create" className="flex items-center gap-2 w-full text-gray-200 hover:text-white">
-                        <Building2 className="w-4 h-4 text-[#FF5722]" /> Add New Listing
-                      </Link>
+                    <DropdownMenuItem onClick={() => router.push('/owner/listing/create')} className="flex items-center gap-2 text-gray-200 hover:text-white cursor-pointer">
+                      <Building2 className="w-4 h-4 text-[#FF5722]" /> Add New Listing
                     </DropdownMenuItem>
                   </>
                 ) : (
                   <>
-                    <DropdownMenuItem>
-                      <Link href="/profile" className="flex items-center gap-2 w-full text-gray-200 hover:text-white">
-                        <User className="w-4 h-4 text-[#FF5722]" /> Profile
-                      </Link>
+                    <DropdownMenuItem onClick={() => router.push('/profile')} className="flex items-center gap-2 text-gray-200 hover:text-white cursor-pointer">
+                      <User className="w-4 h-4 text-[#FF5722]" /> Profile & Edit Details
                     </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <Link href="/saved" className="flex items-center gap-2 w-full text-gray-200 hover:text-white">
-                        <Heart className="w-4 h-4 text-[#FF5722]" /> Saved Gyms
-                      </Link>
+                    <DropdownMenuItem onClick={() => router.push('/saved')} className="flex items-center gap-2 text-gray-200 hover:text-white cursor-pointer">
+                      <Heart className="w-4 h-4 text-[#FF5722]" /> Saved Gyms
                     </DropdownMenuItem>
                   </>
                 )}
 
                 {role === 'admin' && (
-                  <DropdownMenuItem>
-                    <Link href="/admin/verifications" className="flex items-center gap-2 w-full text-[#FF5722]">
-                      Admin Panel
-                    </Link>
+                  <DropdownMenuItem onClick={() => router.push('/admin/verifications')} className="flex items-center gap-2 text-[#FF5722] cursor-pointer">
+                    Admin Panel
                   </DropdownMenuItem>
                 )}
 
                 <DropdownMenuSeparator className="bg-white/10" />
                 <DropdownMenuItem
                   onClick={signOut}
-                  className="flex items-center gap-2 cursor-pointer text-red-400 hover:text-red-300 focus:text-red-300"
+                  className="flex items-center gap-2 cursor-pointer text-red-400 hover:text-red-300 focus:text-red-300 font-medium"
                 >
-                  <LogOut className="w-4 h-4" /> Sign Out
+                  <LogOut className="w-4 h-4" /> Sign Out / Logout
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
