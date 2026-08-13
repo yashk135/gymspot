@@ -34,13 +34,16 @@ const SAMPLE_TRIALS = [
 ];
 
 export default function UserProfilePage() {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const { city, setCity } = useLocationStore();
 
-  const [name, setName] = useState(user?.user_metadata?.name || 'Yash Karwa');
-  const [phone, setPhone] = useState(user?.phone || '+91 98765 43210');
-  const [email] = useState(user?.email || 'yash@example.com');
+  const displayName = user?.user_metadata?.name || user?.email?.split('@')[0] || 'User';
+  const [name, setName] = useState(displayName);
+  const [phone, setPhone] = useState(user?.phone || '');
   const [currency, setCurrency] = useState('INR');
+
+  const email = user?.email || 'user@example.com';
+  const avatarLetter = (name || displayName || 'U')[0]?.toUpperCase() || 'U';
 
   const handleSaveProfile = (e: React.FormEvent) => {
     e.preventDefault();
@@ -55,7 +58,7 @@ export default function UserProfilePage() {
         {/* Profile Header Card */}
         <div className="p-6 rounded-2xl bg-[#161626] border border-white/10 flex flex-col sm:flex-row items-center gap-5">
           <div className="w-20 h-20 rounded-full bg-[#FF5722] text-white font-extrabold font-syne text-3xl flex items-center justify-center border-2 border-white/20 shadow-lg shadow-[#FF5722]/30 shrink-0">
-            {name[0]?.toUpperCase() || 'U'}
+            {avatarLetter}
           </div>
           <div className="space-y-1 text-center sm:text-left flex-1">
             <h1 className="text-2xl font-bold font-syne text-white">{name}</h1>
