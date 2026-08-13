@@ -1,28 +1,37 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Dumbbell, Heart, User, LayoutDashboard, LogOut, Menu, Building2 } from 'lucide-react';
+import { Dumbbell, Heart, User, LayoutDashboard, LogOut, Menu, Building2, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { useAuth } from '@/hooks/useAuth';
 
 export function Navbar() {
   const router = useRouter();
   const { user, role, isLoggedIn, signOut, loading } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
+  const profileRef = useRef<HTMLDivElement>(null);
 
   const userInitial = user?.user_metadata?.name?.[0] || user?.email?.[0] || 'U';
+
+  // Close profile dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (profileRef.current && !profileRef.current.contains(event.target as Node)) {
+        setProfileOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handleNavigation = (path: string) => {
+    setProfileOpen(false);
+    setMobileOpen(false);
+    router.push(path);
+  };
 
   return (
     <nav className="w-full h-16 border-b border-white/10 bg-[#1A1A2E]/90 backdrop-blur-md px-4 md:px-8 flex items-center justify-between sticky top-0 z-50">
@@ -67,158 +76,174 @@ export function Navbar() {
               </Link>
             )}
 
-            {/* Profile Dropdown */}
-            <DropdownMenu>
-              <DropdownMenuTrigger className="outline-none focus:ring-2 focus:ring-[#FF5722] rounded-full cursor-pointer">
-                <Avatar className="w-9 h-9 border border-white/20 hover:border-[#FF5722] transition-colors cursor-pointer">
-                  <AvatarImage src={user?.user_metadata?.avatar_url || ''} />
-                  <AvatarFallback className="bg-[#FF5722] text-white font-bold text-sm cursor-pointer">
-                    {userInitial.toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56 bg-[#161626] border-white/10 text-white">
-                <DropdownMenuLabel className="font-normal">
-                  <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium leading-none text-white">
+            {/* Profile Dropdown - Custom Implementation */}
+            <div className="relative" ref={profileRef}>
+              <button
+                onClick={() => setProfileOpen(!profileOpen)}
+                className="w-9 h-9 rounded-full border border-white/20 hover:border-[#FF5722] transition-colors cursor-pointer bg-[#FF5722] text-white font-bold text-sm flex items-center justify-center outline-none focus:ring-2 focus:ring-[#FF5722]"
+              >
+                {userInitial.toUpperCase()}
+              </button>
+
+              {profileOpen && (
+                <div className="absolute right-0 top-12 w-56 bg-[#161626] border border-white/10 rounded-xl shadow-2xl shadow-black/50 py-2 z-[100] animate-in fade-in-0 zoom-in-95 duration-150">
+                  {/* User Info */}
+                  <div className="px-3 py-2 border-b border-white/10">
+                    <p className="text-sm font-medium text-white truncate">
                       {user?.user_metadata?.name || 'Account'}
                     </p>
-                    <p className="text-xs leading-none text-gray-400 truncate">
+                    <p className="text-xs text-gray-400 truncate">
                       {user?.email || user?.phone}
                     </p>
                   </div>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator className="bg-white/10" />
 
-                {role === 'owner' ? (
-                  <>
-                    <DropdownMenuItem onClick={() => router.push('/owner/dashboard')} className="flex items-center gap-2 text-gray-200 hover:text-white cursor-pointer">
-                      <LayoutDashboard className="w-4 h-4 text-[#FF5722]" /> Owner Dashboard
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => router.push('/owner/listing/create')} className="flex items-center gap-2 text-gray-200 hover:text-white cursor-pointer">
-                      <Building2 className="w-4 h-4 text-[#FF5722]" /> Add New Listing
-                    </DropdownMenuItem>
-                  </>
-                ) : (
-                  <>
-                    <DropdownMenuItem onClick={() => router.push('/profile')} className="flex items-center gap-2 text-gray-200 hover:text-white cursor-pointer">
-                      <User className="w-4 h-4 text-[#FF5722]" /> Profile & Edit Details
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => router.push('/saved')} className="flex items-center gap-2 text-gray-200 hover:text-white cursor-pointer">
-                      <Heart className="w-4 h-4 text-[#FF5722]" /> Saved Gyms
-                    </DropdownMenuItem>
-                  </>
-                )}
+                  {/* Menu Items */}
+                  <div className="py-1">
+                    {role === 'owner' ? (
+                      <>
+                        <button
+                          onClick={() => handleNavigation('/owner/dashboard')}
+                          className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-200 hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
+                        >
+                          <LayoutDashboard className="w-4 h-4 text-[#FF5722]" /> Owner Dashboard
+                        </button>
+                        <button
+                          onClick={() => handleNavigation('/owner/listing/create')}
+                          className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-200 hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
+                        >
+                          <Building2 className="w-4 h-4 text-[#FF5722]" /> Add New Listing
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <button
+                          onClick={() => handleNavigation('/profile')}
+                          className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-200 hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
+                        >
+                          <User className="w-4 h-4 text-[#FF5722]" /> Profile & Edit Details
+                        </button>
+                        <button
+                          onClick={() => handleNavigation('/saved')}
+                          className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-200 hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
+                        >
+                          <Heart className="w-4 h-4 text-[#FF5722]" /> Saved Gyms
+                        </button>
+                      </>
+                    )}
 
-                {role === 'admin' && (
-                  <DropdownMenuItem onClick={() => router.push('/admin/verifications')} className="flex items-center gap-2 text-[#FF5722] cursor-pointer">
-                    Admin Panel
-                  </DropdownMenuItem>
-                )}
+                    {role === 'admin' && (
+                      <button
+                        onClick={() => handleNavigation('/admin/verifications')}
+                        className="w-full flex items-center gap-2 px-3 py-2 text-sm text-[#FF5722] hover:bg-white/5 transition-colors cursor-pointer"
+                      >
+                        Admin Panel
+                      </button>
+                    )}
+                  </div>
 
-                <DropdownMenuSeparator className="bg-white/10" />
-                <DropdownMenuItem
-                  onClick={signOut}
-                  className="flex items-center gap-2 cursor-pointer text-red-400 hover:text-red-300 focus:text-red-300 font-medium"
-                >
-                  <LogOut className="w-4 h-4" /> Sign Out / Logout
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+                  {/* Sign Out */}
+                  <div className="border-t border-white/10 pt-1">
+                    <button
+                      onClick={() => {
+                        setProfileOpen(false);
+                        signOut();
+                      }}
+                      className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors cursor-pointer font-medium"
+                    >
+                      <LogOut className="w-4 h-4" /> Sign Out / Logout
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         )}
       </div>
 
       {/* Mobile Hamburger Menu */}
       <div className="md:hidden">
-        <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-          <SheetTrigger className="text-white p-2">
-            <Menu className="w-6 h-6" />
-          </SheetTrigger>
-          <SheetContent side="right" className="bg-[#161626] border-white/10 text-white w-72 p-6 flex flex-col justify-between">
-            <div className="space-y-6">
-              <div className="flex items-center justify-between border-b border-white/10 pb-4">
-                <Link href="/" onClick={() => setMobileOpen(false)} className="flex items-center gap-2 font-syne font-bold text-lg">
-                  <Dumbbell className="w-5 h-5 text-[#FF5722]" /> GymSpot
-                </Link>
-              </div>
+        <button
+          onClick={() => setMobileOpen(!mobileOpen)}
+          className="text-white p-2"
+        >
+          {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+        </button>
+      </div>
 
-              {!isLoggedIn ? (
-                <div className="flex flex-col gap-3">
-                  <Link href="/login" onClick={() => setMobileOpen(false)}>
-                    <Button variant="outline" className="w-full border-white/10 text-white hover:bg-white/5">
-                      Login
-                    </Button>
-                  </Link>
-                  <Link href="/owner/signup" onClick={() => setMobileOpen(false)}>
-                    <Button className="w-full bg-[#FF5722] hover:bg-[#FF5722]/90 text-white font-medium">
-                      List Your Gym
-                    </Button>
-                  </Link>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3 p-3 rounded-lg bg-white/5 border border-white/10">
-                    <Avatar className="w-10 h-10 border border-white/20">
-                      <AvatarImage src={user?.user_metadata?.avatar_url || ''} />
-                      <AvatarFallback className="bg-[#FF5722] text-white font-bold">
-                        {userInitial.toUpperCase()}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="truncate">
-                      <p className="font-semibold text-sm text-white">{user?.user_metadata?.name || 'User'}</p>
-                      <p className="text-xs text-gray-400 truncate">{user?.email || user?.phone}</p>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-col gap-2 pt-2">
-                    {role === 'owner' ? (
-                      <>
-                        <Link href="/owner/dashboard" onClick={() => setMobileOpen(false)}>
-                          <Button variant="ghost" className="w-full justify-start gap-2 text-gray-200">
-                            <LayoutDashboard className="w-4 h-4 text-[#FF5722]" /> Dashboard
-                          </Button>
-                        </Link>
-                        <Link href="/owner/listing/create" onClick={() => setMobileOpen(false)}>
-                          <Button variant="ghost" className="w-full justify-start gap-2 text-gray-200">
-                            <Building2 className="w-4 h-4 text-[#FF5722]" /> Add Listing
-                          </Button>
-                        </Link>
-                      </>
-                    ) : (
-                      <>
-                        <Link href="/profile" onClick={() => setMobileOpen(false)}>
-                          <Button variant="ghost" className="w-full justify-start gap-2 text-gray-200">
-                            <User className="w-4 h-4 text-[#FF5722]" /> Profile
-                          </Button>
-                        </Link>
-                        <Link href="/saved" onClick={() => setMobileOpen(false)}>
-                          <Button variant="ghost" className="w-full justify-start gap-2 text-gray-200">
-                            <Heart className="w-4 h-4 text-[#FF5722]" /> Saved Gyms
-                          </Button>
-                        </Link>
-                      </>
-                    )}
-                  </div>
-                </div>
-              )}
+      {/* Mobile Menu Overlay */}
+      {mobileOpen && (
+        <div className="fixed inset-0 top-16 bg-[#161626] z-40 p-6 flex flex-col justify-between md:hidden animate-in slide-in-from-right duration-200">
+          <div className="space-y-6">
+            <div className="flex items-center justify-between border-b border-white/10 pb-4">
+              <Link href="/" onClick={() => setMobileOpen(false)} className="flex items-center gap-2 font-syne font-bold text-lg text-white">
+                <Dumbbell className="w-5 h-5 text-[#FF5722]" /> GymSpot
+              </Link>
             </div>
 
-            {isLoggedIn && (
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setMobileOpen(false);
-                  signOut();
-                }}
-                className="w-full border-red-500/30 text-red-400 hover:bg-red-500/10 flex items-center justify-center gap-2"
-              >
-                <LogOut className="w-4 h-4" /> Sign Out
-              </Button>
+            {!isLoggedIn ? (
+              <div className="flex flex-col gap-3">
+                <Link href="/login" onClick={() => setMobileOpen(false)}>
+                  <Button variant="outline" className="w-full border-white/10 text-white hover:bg-white/5">
+                    Login
+                  </Button>
+                </Link>
+                <Link href="/owner/signup" onClick={() => setMobileOpen(false)}>
+                  <Button className="w-full bg-[#FF5722] hover:bg-[#FF5722]/90 text-white font-medium">
+                    List Your Gym
+                  </Button>
+                </Link>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <div className="flex items-center gap-3 p-3 rounded-lg bg-white/5 border border-white/10">
+                  <div className="w-10 h-10 rounded-full bg-[#FF5722] text-white font-bold flex items-center justify-center border border-white/20">
+                    {userInitial.toUpperCase()}
+                  </div>
+                  <div className="truncate">
+                    <p className="font-semibold text-sm text-white">{user?.user_metadata?.name || 'User'}</p>
+                    <p className="text-xs text-gray-400 truncate">{user?.email || user?.phone}</p>
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-2 pt-2">
+                  {role === 'owner' ? (
+                    <>
+                      <button onClick={() => handleNavigation('/owner/dashboard')} className="w-full text-left flex items-center gap-2 px-3 py-2.5 rounded-lg text-gray-200 hover:bg-white/5">
+                        <LayoutDashboard className="w-4 h-4 text-[#FF5722]" /> Dashboard
+                      </button>
+                      <button onClick={() => handleNavigation('/owner/listing/create')} className="w-full text-left flex items-center gap-2 px-3 py-2.5 rounded-lg text-gray-200 hover:bg-white/5">
+                        <Building2 className="w-4 h-4 text-[#FF5722]" /> Add Listing
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button onClick={() => handleNavigation('/profile')} className="w-full text-left flex items-center gap-2 px-3 py-2.5 rounded-lg text-gray-200 hover:bg-white/5">
+                        <User className="w-4 h-4 text-[#FF5722]" /> Profile
+                      </button>
+                      <button onClick={() => handleNavigation('/saved')} className="w-full text-left flex items-center gap-2 px-3 py-2.5 rounded-lg text-gray-200 hover:bg-white/5">
+                        <Heart className="w-4 h-4 text-[#FF5722]" /> Saved Gyms
+                      </button>
+                    </>
+                  )}
+                </div>
+              </div>
             )}
-          </SheetContent>
-        </Sheet>
-      </div>
+          </div>
+
+          {isLoggedIn && (
+            <Button
+              variant="outline"
+              onClick={() => {
+                setMobileOpen(false);
+                signOut();
+              }}
+              className="w-full border-red-500/30 text-red-400 hover:bg-red-500/10 flex items-center justify-center gap-2"
+            >
+              <LogOut className="w-4 h-4" /> Sign Out
+            </Button>
+          )}
+        </div>
+      )}
     </nav>
   );
 }
