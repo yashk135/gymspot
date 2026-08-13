@@ -31,11 +31,10 @@ export function useAuth() {
     }
 
     // Check if gym owner
-    const { data: owner } = await supabase
-      .from('gym_owners')
+    const { data: owner } = await (supabase.from('gym_owners') as any)
       .select('id')
       .eq('id', user.id)
-      .single();
+      .maybeSingle();
 
     if (owner) return 'owner';
 
