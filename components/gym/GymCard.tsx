@@ -133,8 +133,8 @@ export function GymCard({ gym }: GymCardProps) {
         <div className="flex items-center justify-between text-xs pt-1 border-t border-white/5">
           <div className="flex items-center gap-1 text-amber-400 font-bold">
             <Star className="w-3.5 h-3.5 fill-amber-400" />
-            <span>{gym.total_rating.toFixed(1)}</span>
-            <span className="text-gray-400 font-normal">({gym.rating_count})</span>
+            <span>{(gym.total_rating ?? 0).toFixed(1)}</span>
+            <span className="text-gray-400 font-normal">({gym.rating_count ?? 0})</span>
           </div>
 
           {gym.distance_km !== undefined && (
@@ -149,7 +149,7 @@ export function GymCard({ gym }: GymCardProps) {
           <div>
             <span className="text-[10px] text-gray-400 uppercase tracking-wider block">Starting From</span>
             <p className="text-lg font-extrabold text-white font-syne">
-              {gym.currency === 'INR' ? '₹' : '$'}{gym.starting_price.toLocaleString()}
+              {gym.currency === 'INR' ? '₹' : '$'}{(gym.starting_price ?? 0).toLocaleString()}
               <span className="text-xs text-gray-400 font-normal">/mo</span>
             </p>
           </div>

@@ -1,5 +1,6 @@
 'use client';
 
+import { useMemo } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import Link from 'next/link';
@@ -8,14 +9,6 @@ import { Star, MapPin, ArrowUpRight } from 'lucide-react';
 import { GymCardData } from './GymCard';
 import 'leaflet/dist/leaflet.css';
 
-const CustomGymIcon = L.icon({
-  iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-  iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
-  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-});
-
 interface GymMapInnerProps {
   gyms: GymCardData[];
   centerLat: number;
@@ -23,6 +16,16 @@ interface GymMapInnerProps {
 }
 
 export default function GymMapInner({ gyms, centerLat, centerLng }: GymMapInnerProps) {
+  const CustomGymIcon = useMemo(() => {
+    return L.icon({
+      iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+      iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+      shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+      iconSize: [25, 41],
+      iconAnchor: [12, 41],
+    });
+  }, []);
+
   return (
     <div className="w-full h-[500px] rounded-2xl overflow-hidden border border-white/10 relative z-0">
       <MapContainer
@@ -55,10 +58,10 @@ export default function GymMapInner({ gyms, centerLat, centerLng }: GymMapInnerP
                 <div className="flex items-center justify-between text-xs pt-1 border-t border-gray-200">
                   <div className="flex items-center gap-1 font-bold text-amber-600">
                     <Star className="w-3 h-3 fill-amber-500" />
-                    <span>{gym.total_rating.toFixed(1)}</span>
+                    <span>{(gym.total_rating ?? 0).toFixed(1)}</span>
                   </div>
                   <span className="font-extrabold text-[#FF5722]">
-                    ₹{gym.starting_price.toLocaleString()}/mo
+                    ₹{(gym.starting_price ?? 0).toLocaleString()}/mo
                   </span>
                 </div>
                 <Link

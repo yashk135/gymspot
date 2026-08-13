@@ -54,34 +54,46 @@ export const useLocationStore = create<LocationState>((set) => ({
 
   requestGpsLocation: async () => {
     set({ loading: true });
-    return new Promise((resolve) => {
-      if (typeof window !== 'undefined' && 'geolocation' in navigator) {
-        navigator.geolocation.getCurrentPosition(
-          (pos) => {
-            set({
-              lat: pos.coords.latitude,
-              lng: pos.coords.longitude,
-              city: 'Near You (GPS)',
-              isGpsAllowed: true,
-              loading: false,
-            });
-            resolve();
-          },
-          () => {
-            // Geolocation denied or error
-            set({
-              lat: MUMBAI_DEFAULT.lat,
-              lng: MUMBAI_DEFAULT.lng,
-              city: 'Mumbai',
-              isGpsAllowed: false,
-              loading: false,
-            });
-            resolve();
-          },
-          { timeout: 8000 }
-        );
-      } else {
-        set({ loading: false });
+    return new Promise<void>((resolve) => {
+      try {
+        if (typeof window !== 'undefined' && 'geolocation' in navigator) {
+          navigator.geolocation.getCurrentPosition(
+            (pos) => {
+              set({
+                lat: pos.coords.latitude,
+                lng: pos.coords.longitude,
+                city: 'Near You (GPS)',
+                isGpsAllowed: true,
+                loading: false,
+              });
+              resolve();
+            },
+            () => {
+              // Geolocation denied or error — fallback to Mumbai
+              set({
+                lat: MUMBAI_DEFAULT.lat,
+                lng: MUMBAI_DEFAULT.lng,
+                city: 'Mumbai',
+                isGpsAllowed: false,
+                loading: false,
+              });
+              resolve();
+            },
+            { timeout: 8000 }
+          );
+        } else {
+          set({ loading: false });
+          resolve();
+        }
+      } catch {
+        // Catch any unexpected errors from geolocation API
+        set({
+          lat: MUMBAI_DEFAULT.lat,
+          lng: MUMBAI_DEFAULT.lng,
+          city: 'Mumbai',
+          isGpsAllowed: false,
+          loading: false,
+        });
         resolve();
       }
     });
