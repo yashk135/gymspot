@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
 
-// Fallback seed detail data for all 12 flagship gyms
+// Comprehensive detail data dictionary for ALL 12 gyms
 const SEED_DETAILS: Record<string, any> = {
-  // 1. Golds Gym Andheri West
+  // 1. Gold's Gym — Andheri West
   'g1111111-1111-1111-1111-111111111111': {
     id: 'g1111111-1111-1111-1111-111111111111',
     name: 'Golds Gym — Andheri West',
@@ -29,11 +29,11 @@ const SEED_DETAILS: Record<string, any> = {
       'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1200&q=80',
       'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=1200&q=80',
       'https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&w=1200&q=80',
-      'https://images.unsplash.com/photo-1545205597-3d9d02c29597?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1540497077202-7c8a3999166f?auto=format&fit=crop&w=1200&q=80',
     ],
     plans: [
       {
-        id: 'p1',
+        id: 'p101',
         plan_name: 'Monthly General Pass',
         duration_days: 30,
         price: 3500,
@@ -42,7 +42,7 @@ const SEED_DETAILS: Record<string, any> = {
         is_best_value: false,
       },
       {
-        id: 'p2',
+        id: 'p102',
         plan_name: 'Annual VIP All-Access',
         duration_days: 365,
         price: 28000,
@@ -70,7 +70,7 @@ const SEED_DETAILS: Record<string, any> = {
     equipment: ['Hammer Strength Racks', 'Olympic Barbell & Bumper Plates', 'LifeFitness Treadmills', 'Dumbbells (up to 60kg)'],
     trainers: [
       {
-        id: 't1',
+        id: 't101',
         name: 'Vikram Singh',
         photo_url: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=400&q=80',
         specialization: 'Bodybuilding & Hypertrophy',
@@ -80,7 +80,7 @@ const SEED_DETAILS: Record<string, any> = {
     ],
     deals: [
       {
-        id: 'deal1',
+        id: 'deal101',
         title: 'Flat 30% OFF Annual VIP Pass',
         description: 'Exclusive time-limited deal on annual memberships booked through GymSpot.',
         discount_percent: 30,
@@ -89,7 +89,7 @@ const SEED_DETAILS: Record<string, any> = {
     ],
     reviews: [
       {
-        id: 'r1',
+        id: 'r101',
         user_name: 'Karan Malhotra',
         rating: 5,
         comment: 'Best gym in Andheri West! Equipment is always clean and well maintained. Vikram sir is an incredible coach.',
@@ -97,7 +97,7 @@ const SEED_DETAILS: Record<string, any> = {
     ],
   },
 
-  // 2. Cult Fit Bandra West
+  // 2. Cult Fit — Bandra West
   'g2222222-2222-2222-2222-222222222222': {
     id: 'g2222222-2222-2222-2222-222222222222',
     name: 'Cult Fit — Bandra West',
@@ -121,7 +121,8 @@ const SEED_DETAILS: Record<string, any> = {
     cover_photo: 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=1200&q=80',
     photos: [
       'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=1200&q=80',
-      'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1574680096145-d05b474e2155?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?auto=format&fit=crop&w=1200&q=80',
     ],
     plans: [
       {
@@ -144,7 +145,7 @@ const SEED_DETAILS: Record<string, any> = {
       { day_of_week: 0, dayName: 'Sunday', open_time: '07:00', close_time: '20:00', is_closed: false },
     ],
     amenities: ['AC', 'Group Classes', 'WiFi', 'Shower', 'Locker Room'],
-    equipment: ['Kettlebells', 'Plyo Boxes', 'Medicine Balls', 'Boxing Bags'],
+    equipment: ['Kettlebells', 'Plyo Boxes', 'Medicine Balls', 'Boxing Bags', 'Sled Tracks'],
     trainers: [
       {
         id: 't201',
@@ -166,7 +167,7 @@ const SEED_DETAILS: Record<string, any> = {
     ],
   },
 
-  // 3. Powerhouse Gym Powai
+  // 3. Powerhouse Gym — Powai
   'g3333333-3333-3333-3333-333333333333': {
     id: 'g3333333-3333-3333-3333-333333333333',
     name: 'Powerhouse Gym — Powai',
@@ -191,6 +192,7 @@ const SEED_DETAILS: Record<string, any> = {
     photos: [
       'https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&w=1200&q=80',
       'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=1200&q=80',
     ],
     plans: [
       {
@@ -199,7 +201,7 @@ const SEED_DETAILS: Record<string, any> = {
         duration_days: 30,
         price: 2000,
         currency: 'INR',
-        features: ['Heavy Weight Floor', 'Chalk Allowed', 'Locker Room Access'],
+        features: ['Heavy Weight Floor Access', 'Chalk Allowed Zone', 'Locker Room Access'],
         is_best_value: true,
       },
     ],
@@ -219,7 +221,113 @@ const SEED_DETAILS: Record<string, any> = {
     reviews: [],
   },
 
-  // 4. Nitrro Connaught Place Delhi
+  // 4. Zenith Yoga & Pilates Studio — Juhu
+  'g4444444-4444-4444-4444-444444444444': {
+    id: 'g4444444-4444-4444-4444-444444444444',
+    name: 'Zenith Yoga & Pilates Studio — Juhu',
+    tagline: 'Serene ladies-only yoga & reformer pilates studio',
+    description:
+      'Zenith Juhu is a serene luxury wellness sanctuary providing Hot Yoga, Reformer Pilates, Meditation, and Ashtanga masterclasses exclusively for women.',
+    address: 'Juhu Tara Road, Opp. Hotel Horizon, Juhu, Mumbai, Maharashtra 400049',
+    country: 'India',
+    lat: 19.0988,
+    lng: 72.8264,
+    phone: '+912226100004',
+    email: 'info@zenithjuhu.in',
+    gym_type: 'Yoga',
+    gender_type: 'Ladies Only',
+    is_verified: true,
+    is_featured: false,
+    total_rating: 4.7,
+    rating_count: 88,
+    starting_price: 5000,
+    currency: 'INR',
+    cover_photo: 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?auto=format&fit=crop&w=1200&q=80',
+    photos: [
+      'https://images.unsplash.com/photo-1545205597-3d9d02c29597?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=1200&q=80',
+    ],
+    plans: [
+      {
+        id: 'p401',
+        plan_name: 'Reformer & Yoga Monthly',
+        duration_days: 30,
+        price: 5000,
+        currency: 'INR',
+        features: ['Reformer Pilates Sessions', 'Hot Yoga Masterclass', 'Green Tea Bar Access'],
+        is_best_value: true,
+      },
+    ],
+    timings: [
+      { day_of_week: 1, dayName: 'Monday', open_time: '07:00', close_time: '20:00', is_closed: false },
+      { day_of_week: 2, dayName: 'Tuesday', open_time: '07:00', close_time: '20:00', is_closed: false },
+      { day_of_week: 3, dayName: 'Wednesday', open_time: '07:00', close_time: '20:00', is_closed: false },
+      { day_of_week: 4, dayName: 'Thursday', open_time: '07:00', close_time: '20:00', is_closed: false },
+      { day_of_week: 5, dayName: 'Friday', open_time: '07:00', close_time: '20:00', is_closed: false },
+      { day_of_week: 6, dayName: 'Saturday', open_time: '08:00', close_time: '18:00', is_closed: false },
+      { day_of_week: 0, dayName: 'Sunday', open_time: '08:00', close_time: '14:00', is_closed: false },
+    ],
+    amenities: ['AC', 'WiFi', 'Shower', 'Personal Training', 'Ladies Only', 'Green Tea Lounge'],
+    equipment: ['Allegro 2 Reformers', 'Yoga Blocks & Straps', 'Bolsters & Mats'],
+    trainers: [],
+    deals: [],
+    reviews: [],
+  },
+
+  // 5. Iron Paradise MMA — Lower Parel
+  'g5555555-5555-5555-5555-555555555555': {
+    id: 'g5555555-5555-5555-5555-555555555555',
+    name: 'Iron Paradise MMA & Fitness — Lower Parel',
+    tagline: 'Full octagonal cage & combat conditioning center',
+    description:
+      'Iron Paradise is Mumbai\'s premier combat sports facility with full octagonal cage, heavy punching bags, Jiu-Jitsu mats, and pro strength conditioning.',
+    address: 'Senapati Bapat Marg, Lower Parel, Mumbai, Maharashtra 400013',
+    country: 'India',
+    lat: 18.9986,
+    lng: 72.8278,
+    phone: '+912224900005',
+    email: 'contact@ironparadise.in',
+    gym_type: 'MMA',
+    gender_type: 'Co-ed',
+    is_verified: true,
+    is_featured: true,
+    total_rating: 4.9,
+    rating_count: 175,
+    starting_price: 4000,
+    currency: 'INR',
+    cover_photo: 'https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?auto=format&fit=crop&w=1200&q=80',
+    photos: [
+      'https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1517931524326-bdd55a541177?auto=format&fit=crop&w=1200&q=80',
+    ],
+    plans: [
+      {
+        id: 'p501',
+        plan_name: 'MMA Pro Quarterly',
+        duration_days: 90,
+        price: 12000,
+        currency: 'INR',
+        features: ['Octagon Cage Access', 'BJJ Mat Sessions', 'Striking & Kickboxing'],
+        is_best_value: true,
+      },
+    ],
+    timings: [
+      { day_of_week: 1, dayName: 'Monday', open_time: '06:00', close_time: '22:30', is_closed: false },
+      { day_of_week: 2, dayName: 'Tuesday', open_time: '06:00', close_time: '22:30', is_closed: false },
+      { day_of_week: 3, dayName: 'Wednesday', open_time: '06:00', close_time: '22:30', is_closed: false },
+      { day_of_week: 4, dayName: 'Thursday', open_time: '06:00', close_time: '22:30', is_closed: false },
+      { day_of_week: 5, dayName: 'Friday', open_time: '06:00', close_time: '22:30', is_closed: false },
+      { day_of_week: 6, dayName: 'Saturday', open_time: '07:00', close_time: '21:00', is_closed: false },
+      { day_of_week: 0, dayName: 'Sunday', open_time: '08:00', close_time: '18:00', is_closed: false },
+    ],
+    amenities: ['AC', 'Group Classes', 'Shower', 'Sauna', 'Locker Room'],
+    equipment: ['Octagon Cage', 'Heavy Leather Bags', 'Wrestling Mats', 'Speed Bags'],
+    trainers: [],
+    deals: [],
+    reviews: [],
+  },
+
+  // 6. Nitrro Wellness Connaught Place Delhi
   'g6666666-6666-6666-6666-666666666666': {
     id: 'g6666666-6666-6666-6666-666666666666',
     name: 'Nitrro Wellness Fitness Hub — Connaught Place',
@@ -244,6 +352,7 @@ const SEED_DETAILS: Record<string, any> = {
     photos: [
       'https://images.unsplash.com/photo-1571902943202-507ec2618e8f?auto=format&fit=crop&w=1200&q=80',
       'https://images.unsplash.com/photo-1540497077202-7c8a3999166f?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1200&q=80',
     ],
     plans: [
       {
@@ -272,7 +381,113 @@ const SEED_DETAILS: Record<string, any> = {
     reviews: [],
   },
 
-  // 5. Cult Fit Indiranagar Bangalore
+  // 7. Anytime Fitness Hauz Khas Delhi
+  'g7777777-7777-7777-7777-777777777777': {
+    id: 'g7777777-7777-7777-7777-777777777777',
+    name: 'Anytime Fitness — Hauz Khas',
+    tagline: '24/7 keycard access global gym network',
+    description:
+      'Anytime Fitness Hauz Khas provides 24-hour workout convenience with worldwide keycard access, Precor cardio machines, and functional training areas.',
+    address: 'Aurobindo Marg, Hauz Khas Enclave, New Delhi 110016',
+    country: 'India',
+    lat: 28.5494,
+    lng: 77.2001,
+    phone: '+911141600007',
+    email: 'hauzkhas@anytimefitness.in',
+    gym_type: 'General',
+    gender_type: 'Co-ed',
+    is_verified: true,
+    is_featured: false,
+    total_rating: 4.6,
+    rating_count: 189,
+    starting_price: 3000,
+    currency: 'INR',
+    cover_photo: 'https://images.unsplash.com/photo-1593079831268-3381b0db4a77?auto=format&fit=crop&w=1200&q=80',
+    photos: [
+      'https://images.unsplash.com/photo-1593079831268-3381b0db4a77?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1200&q=80',
+    ],
+    plans: [
+      {
+        id: 'p701',
+        plan_name: 'Monthly 24/7 Keycard Pass',
+        duration_days: 30,
+        price: 3000,
+        currency: 'INR',
+        features: ['24/7 Worldwide Access', 'Private Bathrooms', 'App Workout Coaching'],
+        is_best_value: true,
+      },
+    ],
+    timings: [
+      { day_of_week: 1, dayName: 'Monday', open_time: '00:00', close_time: '23:59', is_closed: false },
+      { day_of_week: 2, dayName: 'Tuesday', open_time: '00:00', close_time: '23:59', is_closed: false },
+      { day_of_week: 3, dayName: 'Wednesday', open_time: '00:00', close_time: '23:59', is_closed: false },
+      { day_of_week: 4, dayName: 'Thursday', open_time: '00:00', close_time: '23:59', is_closed: false },
+      { day_of_week: 5, dayName: 'Friday', open_time: '00:00', close_time: '23:59', is_closed: false },
+      { day_of_week: 6, dayName: 'Saturday', open_time: '00:00', close_time: '23:59', is_closed: false },
+      { day_of_week: 0, dayName: 'Sunday', open_time: '00:00', close_time: '23:59', is_closed: false },
+    ],
+    amenities: ['24/7 Access', 'AC', 'WiFi', 'Private Showers', 'Parking'],
+    equipment: ['Precor Ellipticals', 'Matrix Pin Loaded Machines', 'Synergy360 Turf'],
+    trainers: [],
+    deals: [],
+    reviews: [],
+  },
+
+  // 8. UFC Gym Vasant Kunj Delhi
+  'g8888888-8888-8888-8888-888888888888': {
+    id: 'g8888888-8888-8888-8888-888888888888',
+    name: 'UFC Gym — Vasant Kunj',
+    tagline: 'Train Like a Champion — Full Octagon & Striking Center',
+    description:
+      'UFC Gym Vasant Kunj brings MMA-inspired fitness to Delhi with full Octagon cage, heavy bag room, Jiu-Jitsu mats, and pro strength conditioning.',
+    address: 'Nelson Mandela Marg, Vasant Kunj, New Delhi 110070',
+    country: 'India',
+    lat: 28.5293,
+    lng: 77.1554,
+    phone: '+911149800008',
+    email: 'vasantkunj@ufcgym.in',
+    gym_type: 'MMA',
+    gender_type: 'Co-ed',
+    is_verified: true,
+    is_featured: true,
+    total_rating: 4.9,
+    rating_count: 245,
+    starting_price: 6000,
+    currency: 'INR',
+    cover_photo: 'https://images.unsplash.com/photo-1517931524326-bdd55a541177?auto=format&fit=crop&w=1200&q=80',
+    photos: [
+      'https://images.unsplash.com/photo-1517931524326-bdd55a541177?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1549719386-74dfcbf7dbed?auto=format&fit=crop&w=1200&q=80',
+    ],
+    plans: [
+      {
+        id: 'p801',
+        plan_name: 'UFC Fighter Pass (Monthly)',
+        duration_days: 30,
+        price: 6000,
+        currency: 'INR',
+        features: ['Octagon Access', 'Kickboxing & BJJ Classes', 'Cryotherapy Pass'],
+        is_best_value: true,
+      },
+    ],
+    timings: [
+      { day_of_week: 1, dayName: 'Monday', open_time: '06:00', close_time: '23:00', is_closed: false },
+      { day_of_week: 2, dayName: 'Tuesday', open_time: '06:00', close_time: '23:00', is_closed: false },
+      { day_of_week: 3, dayName: 'Wednesday', open_time: '06:00', close_time: '23:00', is_closed: false },
+      { day_of_week: 4, dayName: 'Thursday', open_time: '06:00', close_time: '23:00', is_closed: false },
+      { day_of_week: 5, dayName: 'Friday', open_time: '06:00', close_time: '23:00', is_closed: false },
+      { day_of_week: 6, dayName: 'Saturday', open_time: '07:00', close_time: '22:00', is_closed: false },
+      { day_of_week: 0, dayName: 'Sunday', open_time: '08:00', close_time: '20:00', is_closed: false },
+    ],
+    amenities: ['Octagon Cage', 'AC', 'Sauna', 'Cryotherapy', 'Locker Room'],
+    equipment: ['UFC Octagon', 'Heavy Bags', 'BJJ Tatami Mats'],
+    trainers: [],
+    deals: [],
+    reviews: [],
+  },
+
+  // 9. Cult Fit Indiranagar Bangalore
   'g9999999-9999-9999-9999-999999999999': {
     id: 'g9999999-9999-9999-9999-999999999999',
     name: 'Cult Fit — Indiranagar',
@@ -324,6 +539,165 @@ const SEED_DETAILS: Record<string, any> = {
     deals: [],
     reviews: [],
   },
+
+  // 10. Gold's Gym Koramangala Bangalore
+  'g1010101-1010-1010-1010-101010101010': {
+    id: 'g1010101-1010-1010-1010-101010101010',
+    name: 'Golds Gym — Koramangala',
+    tagline: 'Bangalore flagship fitness & physiotherapy center',
+    description:
+      'Gold\'s Gym Koramangala features Technogym smart consoles, TRX gear, spin studios, steam bath, and certified in-house physiotherapists.',
+    address: '80 Feet Road, 4th Block, Koramangala, Bengaluru, Karnataka 560034',
+    country: 'India',
+    lat: 12.9352,
+    lng: 77.6245,
+    phone: '+918041200010',
+    email: 'koramangala@goldsgym.in',
+    gym_type: 'General',
+    gender_type: 'Co-ed',
+    is_verified: true,
+    is_featured: false,
+    total_rating: 4.7,
+    rating_count: 278,
+    starting_price: 3200,
+    currency: 'INR',
+    cover_photo: 'https://images.unsplash.com/photo-1540497077202-7c8a3999166f?auto=format&fit=crop&w=1200&q=80',
+    photos: [
+      'https://images.unsplash.com/photo-1540497077202-7c8a3999166f?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1200&q=80',
+    ],
+    plans: [
+      {
+        id: 'p1001',
+        plan_name: 'Monthly General',
+        duration_days: 30,
+        price: 3200,
+        currency: 'INR',
+        features: ['Technogym Floor', 'Physiotherapy Consultation', 'Steam Room'],
+        is_best_value: true,
+      },
+    ],
+    timings: [
+      { day_of_week: 1, dayName: 'Monday', open_time: '06:00', close_time: '22:30', is_closed: false },
+      { day_of_week: 2, dayName: 'Tuesday', open_time: '06:00', close_time: '22:30', is_closed: false },
+      { day_of_week: 3, dayName: 'Wednesday', open_time: '06:00', close_time: '22:30', is_closed: false },
+      { day_of_week: 4, dayName: 'Thursday', open_time: '06:00', close_time: '22:30', is_closed: false },
+      { day_of_week: 5, dayName: 'Friday', open_time: '06:00', close_time: '22:30', is_closed: false },
+      { day_of_week: 6, dayName: 'Saturday', open_time: '06:00', close_time: '22:00', is_closed: false },
+      { day_of_week: 0, dayName: 'Sunday', open_time: '08:00', close_time: '20:00', is_closed: false },
+    ],
+    amenities: ['AC', 'Steam Room', 'Physiotherapy', 'Parking'],
+    equipment: ['Technogym Artis', 'TRX Suspension', 'Spin Bikes'],
+    trainers: [],
+    deals: [],
+    reviews: [],
+  },
+
+  // 11. GymNation Downtown Dubai
+  'g1110111-1111-1111-1111-111111111111': {
+    id: 'g1110111-1111-1111-1111-111111111111',
+    name: 'GymNation — Downtown Dubai',
+    tagline: 'UAE\'s largest 24/7 fitness facility',
+    description:
+      'GymNation Downtown Dubai is a massive 25,000 sq ft 24/7 fitness super-club featuring over 500 Matrix equipment pieces, dedicated ladies-only gym, and free Les Mills classes.',
+    address: 'Financial Center Road, Downtown Dubai, United Arab Emirates',
+    country: 'UAE',
+    lat: 25.1972,
+    lng: 55.2744,
+    phone: '+97148000011',
+    email: 'downtown@gymnation.ae',
+    gym_type: 'General',
+    gender_type: 'Co-ed',
+    is_verified: true,
+    is_featured: true,
+    total_rating: 4.9,
+    rating_count: 512,
+    starting_price: 4999,
+    currency: 'INR',
+    cover_photo: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1200&q=80',
+    photos: [
+      'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1571902943202-507ec2618e8f?auto=format&fit=crop&w=1200&q=80',
+    ],
+    plans: [
+      {
+        id: 'p1101',
+        plan_name: 'GymNation 24/7 Pass',
+        duration_days: 30,
+        price: 4999,
+        currency: 'INR',
+        features: ['24/7 Access', 'Ladies Only Gym Area', 'Les Mills Classes'],
+        is_best_value: true,
+      },
+    ],
+    timings: [
+      { day_of_week: 1, dayName: 'Monday', open_time: '00:00', close_time: '23:59', is_closed: false },
+      { day_of_week: 2, dayName: 'Tuesday', open_time: '00:00', close_time: '23:59', is_closed: false },
+      { day_of_week: 3, dayName: 'Wednesday', open_time: '00:00', close_time: '23:59', is_closed: false },
+      { day_of_week: 4, dayName: 'Thursday', open_time: '00:00', close_time: '23:59', is_closed: false },
+      { day_of_week: 5, dayName: 'Friday', open_time: '00:00', close_time: '23:59', is_closed: false },
+      { day_of_week: 6, dayName: 'Saturday', open_time: '00:00', close_time: '23:59', is_closed: false },
+      { day_of_week: 0, dayName: 'Sunday', open_time: '00:00', close_time: '23:59', is_closed: false },
+    ],
+    amenities: ['24/7 Access', 'AC', 'Ladies Only Gym Zone', 'Spinning Studio'],
+    equipment: ['500+ Matrix Machines', 'Les Mills Studio', 'Combat Zone'],
+    trainers: [],
+    deals: [],
+    reviews: [],
+  },
+
+  // 12. PureGym Soho London
+  'g1212121-1212-1212-1212-121212121212': {
+    id: 'g1212121-1212-1212-1212-121212121212',
+    name: 'PureGym — Soho London',
+    tagline: 'Central London 24/7 fitness club',
+    description:
+      'PureGym Soho London offers round-the-clock fitness in central London featuring Rogue rigs, Wattbikes, free weights up to 50kg, and virtual cycling studios.',
+    address: 'Dean Street, Soho, London W1D 3BF, United Kingdom',
+    country: 'United Kingdom',
+    lat: 51.5136,
+    lng: -0.1332,
+    phone: '+442079460012',
+    email: 'soho@puregym.co.uk',
+    gym_type: 'General',
+    gender_type: 'Co-ed',
+    is_verified: true,
+    is_featured: true,
+    total_rating: 4.8,
+    rating_count: 389,
+    starting_price: 3800,
+    currency: 'INR',
+    cover_photo: 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=1200&q=80',
+    photos: [
+      'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&w=1200&q=80',
+    ],
+    plans: [
+      {
+        id: 'p1201',
+        plan_name: 'PureGym Soho Monthly',
+        duration_days: 30,
+        price: 3800,
+        currency: 'INR',
+        features: ['24/7 Central London Access', 'Rogue Fitness Rig', 'Virtual Cycling'],
+        is_best_value: true,
+      },
+    ],
+    timings: [
+      { day_of_week: 1, dayName: 'Monday', open_time: '00:00', close_time: '23:59', is_closed: false },
+      { day_of_week: 2, dayName: 'Tuesday', open_time: '00:00', close_time: '23:59', is_closed: false },
+      { day_of_week: 3, dayName: 'Wednesday', open_time: '00:00', close_time: '23:59', is_closed: false },
+      { day_of_week: 4, dayName: 'Thursday', open_time: '00:00', close_time: '23:59', is_closed: false },
+      { day_of_week: 5, dayName: 'Friday', open_time: '00:00', close_time: '23:59', is_closed: false },
+      { day_of_week: 6, dayName: 'Saturday', open_time: '00:00', close_time: '23:59', is_closed: false },
+      { day_of_week: 0, dayName: 'Sunday', open_time: '00:00', close_time: '23:59', is_closed: false },
+    ],
+    amenities: ['24/7 Access', 'AC', 'Rogue Rigs', 'Shower Cubicles'],
+    equipment: ['Rogue Fitness Rig', 'Wattbikes', 'Dumbbells up to 50kg'],
+    trainers: [],
+    deals: [],
+    reviews: [],
+  },
 };
 
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -353,16 +727,20 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       const { data: reviews } = await supabase.from('reviews').select('*').eq('gym_id', id);
       const { data: deals } = await supabase.from('gym_deals').select('*').eq('gym_id', id);
 
+      const fallbackObj = SEED_DETAILS[id] || SEED_DETAILS['g1111111-1111-1111-1111-111111111111'];
+
       return NextResponse.json({
         gym: {
           ...gym,
-          photos: photos?.map((p: any) => p.url) || [gym.cover_photo],
-          plans: plans || [],
-          timings: timings || [],
-          amenities: amenities?.map((a: any) => a.amenity_name) || [],
-          trainers: trainers || [],
-          reviews: reviews || [],
-          deals: deals || [],
+          description: gym.description || fallbackObj.description,
+          photos: (photos && photos.length > 0) ? photos.map((p: any) => p.url) : fallbackObj.photos,
+          plans: (plans && plans.length > 0) ? plans : fallbackObj.plans,
+          timings: (timings && timings.length > 0) ? timings : fallbackObj.timings,
+          amenities: (amenities && amenities.length > 0) ? amenities.map((a: any) => a.amenity_name) : fallbackObj.amenities,
+          equipment: fallbackObj.equipment,
+          trainers: (trainers && trainers.length > 0) ? trainers : fallbackObj.trainers,
+          reviews: (reviews && reviews.length > 0) ? reviews : fallbackObj.reviews,
+          deals: (deals && deals.length > 0) ? deals : fallbackObj.deals,
         },
       });
     }
