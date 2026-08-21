@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/hooks/useAuth';
 import { Footer } from '@/components/shared/Footer';
+import { QrScannerModal } from '@/components/owner/QrScannerModal';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -21,33 +22,37 @@ import {
   XCircle,
   ArrowRight,
   ShieldCheck,
+  Scan,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
 const SAMPLE_RECENT_TRIALS = [
   {
     id: 'tr-101',
+    passCode: 'GS-892147',
     userName: 'Rahul Sharma',
     userPhone: '+91 98765 43210',
-    visitDate: '2026-08-09',
+    visitDate: '2026-08-22',
     slot: 'Morning (06:00 - 10:00)',
     status: 'pending',
     createdAt: '10 mins ago',
   },
   {
     id: 'tr-102',
+    passCode: 'GS-774102',
     userName: 'Ananya Verma',
     userPhone: '+91 98123 45678',
-    visitDate: '2026-08-10',
+    visitDate: '2026-08-22',
     slot: 'Evening (17:00 - 21:00)',
     status: 'accepted',
     createdAt: '2 hours ago',
   },
   {
     id: 'tr-103',
+    passCode: 'GS-551029',
     userName: 'Amit Patel',
     userPhone: '+91 97654 32109',
-    visitDate: '2026-08-11',
+    visitDate: '2026-08-23',
     slot: 'Afternoon (12:00 - 16:00)',
     status: 'pending',
     createdAt: '5 hours ago',
@@ -57,10 +62,15 @@ const SAMPLE_RECENT_TRIALS = [
 export default function OwnerDashboardPage() {
   const { user } = useAuth();
   const [trials, setTrials] = useState(SAMPLE_RECENT_TRIALS);
+  const [scannerOpen, setScannerOpen] = useState(false);
 
   const handleUpdateStatus = (id: string, newStatus: 'accepted' | 'declined') => {
     setTrials(trials.map((t) => (t.id === id ? { ...t, status: newStatus } : t)));
-    toast.success(`Trial request ${newStatus === 'accepted' ? 'accepted! User notified.' : 'declined.'}`);
+    toast.success(`Trial request ${newStatus === 'accepted' ? 'accepted! Digital QR code generated for user.' : 'declined.'}`);
+  };
+
+  const handleCheckInSuccess = (passCode: string) => {
+    setTrials(trials.map((t) => (t.passCode === passCode ? { ...t, status: 'accepted' } : t)));
   };
 
   return (
@@ -93,6 +103,12 @@ export default function OwnerDashboardPage() {
           </div>
 
           <div className="flex flex-wrap gap-2">
+            <Button
+              onClick={() => setScannerOpen(true)}
+              className="bg-[#FF5722] hover:bg-[#FF5722]/90 text-white font-bold text-xs h-10 gap-1.5 shadow-lg shadow-[#FF5722]/30"
+            >
+              <Scan className="w-4 h-4" /> Reception QR Scanner
+            </Button>
             <Link href="/owner/listing/edit/g1111111-1111-1111-1111-111111111111">
               <Button variant="outline" className="border-white/10 bg-white/5 text-white hover:bg-white/10 text-xs h-10 gap-1.5">
                 <Edit className="w-4 h-4 text-[#FF5722]" /> Edit Gym Listing
@@ -101,11 +117,6 @@ export default function OwnerDashboardPage() {
             <Link href="/owner/deals">
               <Button variant="outline" className="border-white/10 bg-white/5 text-white hover:bg-white/10 text-xs h-10 gap-1.5">
                 <Tag className="w-4 h-4 text-[#FF5722]" /> Create Deal
-              </Button>
-            </Link>
-            <Link href="/owner/announcements">
-              <Button variant="outline" className="border-white/10 bg-white/5 text-white hover:bg-white/10 text-xs h-10 gap-1.5">
-                <Megaphone className="w-4 h-4 text-[#FF5722]" /> Notice Board
               </Button>
             </Link>
           </div>
@@ -176,7 +187,7 @@ export default function OwnerDashboardPage() {
                 <h3 className="text-lg font-bold font-syne text-white flex items-center gap-2">
                   <Ticket className="w-5 h-5 text-[#FF5722]" /> Recent Free Trial Requests
                 </h3>
-                <p className="text-xs text-gray-400">Accept or decline pending user visit requests</p>
+                <p className="text-xs text-gray-400 font-normal">Accept pending requests to issue Digital QR Workout Tickets</p>
               </div>
 
               <Link href="/owner/inquiries">
@@ -196,6 +207,9 @@ export default function OwnerDashboardPage() {
                     <div className="flex items-center gap-2">
                       <h4 className="font-bold text-white text-base">{t.userName}</h4>
                       <span className="text-xs text-gray-400">{t.userPhone}</span>
+                      <span className="font-mono text-[11px] text-[#FF5722] bg-[#FF5722]/10 px-2 py-0.5 rounded border border-[#FF5722]/30">
+                        {t.passCode}
+                      </span>
                     </div>
                     <p className="text-xs text-gray-300">
                       Requested Visit Date:{' '}
@@ -210,7 +224,7 @@ export default function OwnerDashboardPage() {
                           onClick={() => handleUpdateStatus(t.id, 'accepted')}
                           className="bg-emerald-600 hover:bg-emerald-500 text-white text-xs h-9 px-4 font-semibold flex items-center gap-1"
                         >
-                          <CheckCircle2 className="w-3.5 h-3.5" /> Accept
+                          <CheckCircle2 className="w-3.5 h-3.5" /> Accept & Issue QR Pass
                         </Button>
                         <Button
                           onClick={() => handleUpdateStatus(t.id, 'declined')}
@@ -222,7 +236,7 @@ export default function OwnerDashboardPage() {
                       </div>
                     ) : t.status === 'accepted' ? (
                       <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/40 gap-1 px-3 py-1 text-xs">
-                        <CheckCircle2 className="w-3.5 h-3.5" /> Accepted
+                        <CheckCircle2 className="w-3.5 h-3.5" /> Pass Accepted (QR Active)
                       </Badge>
                     ) : (
                       <Badge className="bg-red-500/20 text-red-400 border-red-500/40 gap-1 px-3 py-1 text-xs">
@@ -236,6 +250,13 @@ export default function OwnerDashboardPage() {
           </CardContent>
         </Card>
       </main>
+
+      {/* QR Code Scanner Tool */}
+      <QrScannerModal
+        open={scannerOpen}
+        onOpenChange={setScannerOpen}
+        onCheckInSuccess={handleCheckInSuccess}
+      />
 
       <Footer />
     </div>

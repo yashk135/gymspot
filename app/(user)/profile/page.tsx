@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { Navbar } from '@/components/shared/Navbar';
 import { Footer } from '@/components/shared/Footer';
+import { QrPassModal, QrPassData } from '@/components/shared/QrPassModal';
 import { useAuth } from '@/hooks/useAuth';
 import { useLocationStore } from '@/hooks/useLocation';
 import { createClient } from '@/lib/supabase/client';
@@ -12,24 +13,28 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { User, Ticket, Star, MapPin, CheckCircle2, Clock, XCircle, Save, LogOut, Edit3 } from 'lucide-react';
+import { User, Ticket, Star, MapPin, CheckCircle2, Clock, XCircle, Save, LogOut, Edit3, QrCode } from 'lucide-react';
 import { toast } from 'sonner';
 
-const SAMPLE_TRIALS = [
+const INITIAL_TRIALS = [
   {
     id: 'tr-1',
+    passCode: 'GS-892147',
     gymName: 'Golds Gym — Andheri West',
-    preferredDate: '2026-08-10',
+    gymAddress: 'Veera Desai Road, Andheri West, Mumbai',
+    preferredDate: '2026-08-22',
     timeSlot: 'Morning (06:00 - 10:00)',
-    status: 'accepted',
-    note: 'Interested in personal training session.',
+    status: 'accepted' as const,
+    note: 'Interested in personal training session and steam room.',
   },
   {
     id: 'tr-2',
+    passCode: 'GS-774102',
     gymName: 'Cult Fit — Bandra West',
-    preferredDate: '2026-08-12',
+    gymAddress: 'Hill Road, Bandra West, Mumbai',
+    preferredDate: '2026-08-24',
     timeSlot: 'Evening (17:00 - 21:00)',
-    status: 'pending',
+    status: 'pending' as const,
     note: 'Group boxing workout pass.',
   },
 ];
@@ -44,6 +49,10 @@ export default function UserProfilePage() {
   const [email, setEmail] = useState('');
   const [saving, setSaving] = useState(false);
 
+  // QR Pass Modal state
+  const [selectedPass, setSelectedPass] = useState<QrPassData | null>(null);
+  const [qrModalOpen, setQrModalOpen] = useState(false);
+
   useEffect(() => {
     if (user) {
       setName(user.user_metadata?.name || user.email?.split('@')[0] || 'User');
@@ -53,6 +62,21 @@ export default function UserProfilePage() {
   }, [user]);
 
   const avatarLetter = (name || email || 'U')[0]?.toUpperCase() || 'U';
+
+  const handleOpenQrPass = (tr: typeof INITIAL_TRIALS[0]) => {
+    setSelectedPass({
+      id: tr.id,
+      passCode: tr.passCode,
+      gymName: tr.gymName,
+      gymAddress: tr.gymAddress,
+      userName: name || 'GymSpot Member',
+      userPhone: phone || '+91 98765 43210',
+      visitDate: tr.preferredDate,
+      timeSlot: tr.timeSlot,
+      status: tr.status,
+    });
+    setQrModalOpen(true);
+  };
 
   const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -197,35 +221,36 @@ export default function UserProfilePage() {
           <TabsContent value="trials">
             <Card className="bg-[#161626] border-white/10 text-white">
               <CardContent className="p-6 space-y-4">
-                <h3 className="text-lg font-bold font-syne text-white border-b border-white/10 pb-3">
-                  My Free Trial Requests
-                </h3>
+                <div className="flex items-center justify-between border-b border-white/10 pb-3">
+                  <h3 className="text-lg font-bold font-syne text-white flex items-center gap-2">
+                    <Ticket className="w-5 h-5 text-[#FF5722]" /> My Free Trial Passes
+                  </h3>
+                  <span className="text-xs text-gray-400">Click &ldquo;View Digital QR Pass&rdquo; to scan at gym</span>
+                </div>
 
                 <div className="space-y-3">
-                  {SAMPLE_TRIALS.map((tr) => (
-                    <div key={tr.id} className="p-4 rounded-xl bg-white/5 border border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  {INITIAL_TRIALS.map((tr) => (
+                    <div key={tr.id} className="p-4 rounded-xl bg-white/5 border border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                       <div className="space-y-1">
-                        <h4 className="font-bold text-white text-base font-syne">{tr.gymName}</h4>
+                        <div className="flex items-center gap-2">
+                          <h4 className="font-bold text-white text-base font-syne">{tr.gymName}</h4>
+                          <span className="font-mono text-[11px] text-[#FF5722] bg-[#FF5722]/10 px-2 py-0.5 rounded border border-[#FF5722]/30">
+                            {tr.passCode}
+                          </span>
+                        </div>
                         <p className="text-xs text-gray-400">
                           Visit Date: <span className="text-white font-medium">{tr.preferredDate}</span> ({tr.timeSlot})
                         </p>
                         {tr.note && <p className="text-xs text-gray-400 italic">&ldquo;{tr.note}&rdquo;</p>}
                       </div>
 
-                      <div className="shrink-0">
-                        {tr.status === 'accepted' ? (
-                          <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/40 gap-1 px-3 py-1 text-xs">
-                            <CheckCircle2 className="w-3.5 h-3.5" /> Pass Accepted
-                          </Badge>
-                        ) : tr.status === 'pending' ? (
-                          <Badge className="bg-amber-500/20 text-amber-400 border-amber-500/40 gap-1 px-3 py-1 text-xs">
-                            <Clock className="w-3.5 h-3.5" /> Pending Confirmation
-                          </Badge>
-                        ) : (
-                          <Badge className="bg-red-500/20 text-red-400 border-red-500/40 gap-1 px-3 py-1 text-xs">
-                            <XCircle className="w-3.5 h-3.5" /> Declined
-                          </Badge>
-                        )}
+                      <div className="shrink-0 flex items-center gap-2">
+                        <Button
+                          onClick={() => handleOpenQrPass(tr)}
+                          className="bg-[#FF5722] hover:bg-[#FF5722]/90 text-white text-xs font-bold h-9 px-4 flex items-center gap-1.5 shadow-md shadow-[#FF5722]/30"
+                        >
+                          <QrCode className="w-4 h-4" /> View Digital QR Pass
+                        </Button>
                       </div>
                     </div>
                   ))}
@@ -257,6 +282,13 @@ export default function UserProfilePage() {
           </TabsContent>
         </Tabs>
       </main>
+
+      {/* QR Pass Modal */}
+      <QrPassModal
+        open={qrModalOpen}
+        onOpenChange={setQrModalOpen}
+        passData={selectedPass}
+      />
 
       <Footer />
     </div>
