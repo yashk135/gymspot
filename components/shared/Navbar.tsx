@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Dumbbell, Heart, User, LayoutDashboard, LogOut, Menu, Building2, X } from 'lucide-react';
+import { Dumbbell, Heart, User, LayoutDashboard, LogOut, Menu, Building2, X, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -65,7 +65,7 @@ export function Navbar() {
             {role === 'owner' ? (
               <Link href="/owner/dashboard">
                 <Button variant="outline" className="border-[#FF5722]/40 text-[#FF5722] hover:bg-[#FF5722]/10 gap-2">
-                  <LayoutDashboard className="w-4 h-4" /> Dashboard
+                  <LayoutDashboard className="w-4 h-4" /> Owner Dashboard
                 </Button>
               </Link>
             ) : (
@@ -86,7 +86,7 @@ export function Navbar() {
               </button>
 
               {profileOpen && (
-                <div className="absolute right-0 top-12 w-56 bg-[#161626] border border-white/10 rounded-xl shadow-2xl shadow-black/50 py-2 z-[100] animate-in fade-in-0 zoom-in-95 duration-150">
+                <div className="absolute right-0 top-12 w-60 bg-[#161626] border border-white/10 rounded-xl shadow-2xl shadow-black/50 py-2 z-[100] animate-in fade-in-0 zoom-in-95 duration-150">
                   {/* User Info */}
                   <div className="px-3 py-2 border-b border-white/10">
                     <p className="text-sm font-medium text-white truncate">
@@ -99,44 +99,34 @@ export function Navbar() {
 
                   {/* Menu Items */}
                   <div className="py-1">
-                    {role === 'owner' ? (
-                      <>
-                        <button
-                          onClick={() => handleNavigation('/owner/dashboard')}
-                          className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-200 hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
-                        >
-                          <LayoutDashboard className="w-4 h-4 text-[#FF5722]" /> Owner Dashboard
-                        </button>
-                        <button
-                          onClick={() => handleNavigation('/owner/listing/create')}
-                          className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-200 hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
-                        >
-                          <Building2 className="w-4 h-4 text-[#FF5722]" /> Add New Listing
-                        </button>
-                      </>
-                    ) : (
-                      <>
-                        <button
-                          onClick={() => handleNavigation('/profile')}
-                          className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-200 hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
-                        >
-                          <User className="w-4 h-4 text-[#FF5722]" /> Profile & Edit Details
-                        </button>
-                        <button
-                          onClick={() => handleNavigation('/saved')}
-                          className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-200 hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
-                        >
-                          <Heart className="w-4 h-4 text-[#FF5722]" /> Saved Gyms
-                        </button>
-                      </>
-                    )}
+                    <button
+                      onClick={() => handleNavigation('/profile')}
+                      className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-200 hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
+                    >
+                      <User className="w-4 h-4 text-[#FF5722]" /> My Profile & Passes
+                    </button>
+
+                    <button
+                      onClick={() => handleNavigation('/saved')}
+                      className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-200 hover:text-white hover:bg-white/5 transition-colors cursor-pointer"
+                    >
+                      <Heart className="w-4 h-4 text-[#FF5722]" /> Saved Gyms
+                    </button>
+
+                    {/* Owner Switch Link */}
+                    <button
+                      onClick={() => handleNavigation('/owner/dashboard')}
+                      className="w-full flex items-center gap-2 px-3 py-2 text-sm text-emerald-400 hover:bg-emerald-500/10 transition-colors cursor-pointer font-semibold border-t border-white/10 mt-1 pt-2"
+                    >
+                      <Building2 className="w-4 h-4 text-emerald-400" /> Gym Owner Portal
+                    </button>
 
                     {role === 'admin' && (
                       <button
                         onClick={() => handleNavigation('/admin/verifications')}
-                        className="w-full flex items-center gap-2 px-3 py-2 text-sm text-[#FF5722] hover:bg-white/5 transition-colors cursor-pointer"
+                        className="w-full flex items-center gap-2 px-3 py-2 text-sm text-[#FF5722] hover:bg-white/5 transition-colors cursor-pointer font-semibold"
                       >
-                        Admin Panel
+                        <ShieldCheck className="w-4 h-4 text-[#FF5722]" /> Admin Panel
                       </button>
                     )}
                   </div>
@@ -206,25 +196,15 @@ export function Navbar() {
                 </div>
 
                 <div className="flex flex-col gap-2 pt-2">
-                  {role === 'owner' ? (
-                    <>
-                      <button onClick={() => handleNavigation('/owner/dashboard')} className="w-full text-left flex items-center gap-2 px-3 py-2.5 rounded-lg text-gray-200 hover:bg-white/5">
-                        <LayoutDashboard className="w-4 h-4 text-[#FF5722]" /> Dashboard
-                      </button>
-                      <button onClick={() => handleNavigation('/owner/listing/create')} className="w-full text-left flex items-center gap-2 px-3 py-2.5 rounded-lg text-gray-200 hover:bg-white/5">
-                        <Building2 className="w-4 h-4 text-[#FF5722]" /> Add Listing
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      <button onClick={() => handleNavigation('/profile')} className="w-full text-left flex items-center gap-2 px-3 py-2.5 rounded-lg text-gray-200 hover:bg-white/5">
-                        <User className="w-4 h-4 text-[#FF5722]" /> Profile
-                      </button>
-                      <button onClick={() => handleNavigation('/saved')} className="w-full text-left flex items-center gap-2 px-3 py-2.5 rounded-lg text-gray-200 hover:bg-white/5">
-                        <Heart className="w-4 h-4 text-[#FF5722]" /> Saved Gyms
-                      </button>
-                    </>
-                  )}
+                  <button onClick={() => handleNavigation('/profile')} className="w-full text-left flex items-center gap-2 px-3 py-2.5 rounded-lg text-gray-200 hover:bg-white/5">
+                    <User className="w-4 h-4 text-[#FF5722]" /> Profile & Passes
+                  </button>
+                  <button onClick={() => handleNavigation('/saved')} className="w-full text-left flex items-center gap-2 px-3 py-2.5 rounded-lg text-gray-200 hover:bg-white/5">
+                    <Heart className="w-4 h-4 text-[#FF5722]" /> Saved Gyms
+                  </button>
+                  <button onClick={() => handleNavigation('/owner/dashboard')} className="w-full text-left flex items-center gap-2 px-3 py-2.5 rounded-lg text-emerald-400 hover:bg-white/5 font-semibold">
+                    <Building2 className="w-4 h-4 text-emerald-400" /> Gym Owner Portal
+                  </button>
                 </div>
               </div>
             )}
