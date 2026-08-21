@@ -35,22 +35,33 @@ export async function updateSession(request: NextRequest) {
   const url = request.nextUrl.clone();
   const path = url.pathname;
 
-  // Protect /owner/* routes
-  if (path.startsWith('/owner')) {
+  // Protect /owner/* routes (excluding login & signup)
+  if (path.startsWith('/owner') && !path.startsWith('/owner/login') && !path.startsWith('/owner/signup')) {
     if (!user) {
-      url.pathname = '/login';
+      url.pathname = '/owner/login';
       return NextResponse.redirect(url);
     }
-    // Check if user exists in gym_owners
-    const { data: owner } = await supabase
-      .from('gym_owners')
-      .select('id')
-      .eq('id', user.id)
-      .single();
 
-    if (!owner) {
-      url.pathname = '/';
-      return NextResponse.redirect(url);
+    // Check if user exists in gym_owners table; if not, auto-register as owner
+    try {
+      const { data: owner } = await supabase
+        .from('gym_owners')
+        .select('id')
+        .eq('id', user.id)
+        .maybeSingle();
+
+      if (!owner) {
+        await (supabase.from('gym_owners') as any).insert({
+          id: user.id,
+          name: user.user_metadata?.name || user.email?.split('@')[0] || 'Gym Owner',
+          email: user.email || '',
+          phone: user.phone || null,
+          country: 'India',
+          currency: 'INR',
+        });
+      }
+    } catch {
+      // Ignore if table fails or mock environment
     }
   }
 
