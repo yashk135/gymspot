@@ -7,6 +7,7 @@ import { Navbar } from '@/components/shared/Navbar';
 import { Footer } from '@/components/shared/Footer';
 import { GymGallery } from '@/components/gym/detail/GymGallery';
 import { FreeTrialModal } from '@/components/gym/detail/FreeTrialModal';
+import { MembershipCheckoutModal } from '@/components/gym/detail/MembershipCheckoutModal';
 import { CompareFloatingBar } from '@/components/shared/CompareFloatingBar';
 import { useCompareStore } from '@/hooks/useCompare';
 import { Button } from '@/components/ui/button';
@@ -29,6 +30,7 @@ import {
   Sparkles,
   Loader2,
   Share2,
+  CreditCard,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -39,6 +41,7 @@ export default function GymDetailPage({ params }: { params: Promise<{ id: string
   const [loading, setLoading] = useState(true);
   const [saved, setSaved] = useState(false);
   const [trialModalOpen, setTrialModalOpen] = useState(false);
+  const [checkoutModalOpen, setCheckoutModalOpen] = useState(false);
 
   const { addGymToCompare, isInCompare, removeGymFromCompare } = useCompareStore();
 
@@ -200,7 +203,7 @@ export default function GymDetailPage({ params }: { params: Promise<{ id: string
 
           {/* ACTION BUTTONS ROW */}
           <div className="flex flex-wrap items-center gap-3">
-            {/* KILLER FEATURE #3: Free Trial Button */}
+            {/* Free Trial Button */}
             <Button
               onClick={() => setTrialModalOpen(true)}
               className="bg-[#FF5722] hover:bg-[#FF5722]/90 text-white font-bold h-11 px-6 text-sm shadow-lg shadow-[#FF5722]/30 flex items-center gap-2"
@@ -208,7 +211,15 @@ export default function GymDetailPage({ params }: { params: Promise<{ id: string
               <Ticket className="w-4 h-4" /> 1-Click Free Trial
             </Button>
 
-            {/* KILLER FEATURE #2: Compare Button */}
+            {/* FEATURE 3: Buy Membership Button */}
+            <Button
+              onClick={() => setCheckoutModalOpen(true)}
+              className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold h-11 px-6 text-sm shadow-lg shadow-emerald-600/30 flex items-center gap-2"
+            >
+              <CreditCard className="w-4 h-4" /> Buy Membership
+            </Button>
+
+            {/* Compare Button */}
             <Button
               onClick={handleToggleCompare}
               variant="outline"
@@ -254,7 +265,7 @@ export default function GymDetailPage({ params }: { params: Promise<{ id: string
           </div>
         </div>
 
-        {/* KILLER FEATURE #4: Active Deals Banner */}
+        {/* Active Deals Banner */}
         {gym.deals && gym.deals.length > 0 && (
           <div className="p-5 rounded-2xl bg-gradient-to-r from-[#FF5722]/20 via-[#161626] to-purple-500/20 border border-[#FF5722]/40 space-y-2 relative overflow-hidden">
             <div className="flex justify-between items-center flex-wrap gap-2">
@@ -300,7 +311,7 @@ export default function GymDetailPage({ params }: { params: Promise<{ id: string
               </CardContent>
             </Card>
 
-            {/* KILLER FEATURE #1: Verified Membership Plans Section */}
+            {/* Verified Membership Plans Section */}
             <Card className="bg-[#161626] border-white/10 text-white">
               <CardContent className="p-6 space-y-4">
                 <div className="flex items-center justify-between border-b border-white/10 pb-3">
@@ -346,14 +357,14 @@ export default function GymDetailPage({ params }: { params: Promise<{ id: string
                       </div>
 
                       <Button
-                        onClick={() => setTrialModalOpen(true)}
+                        onClick={() => setCheckoutModalOpen(true)}
                         className={`w-full text-xs font-bold h-10 ${
                           plan.is_best_value
-                            ? 'bg-[#FF5722] hover:bg-[#FF5722]/90 text-white'
+                            ? 'bg-emerald-600 hover:bg-emerald-500 text-white'
                             : 'bg-white/10 hover:bg-white/20 text-white'
                         }`}
                       >
-                        Book Free Trial For This Plan
+                        Buy This Membership
                       </Button>
                     </div>
                   ))}
@@ -425,7 +436,7 @@ export default function GymDetailPage({ params }: { params: Promise<{ id: string
               </Card>
             )}
 
-            {/* Reviews & Rating Breakdown */}
+            {/* Reviews Section */}
             <Card className="bg-[#161626] border-white/10 text-white">
               <CardContent className="p-6 space-y-6">
                 <div className="flex items-center justify-between border-b border-white/10 pb-4">
@@ -476,12 +487,21 @@ export default function GymDetailPage({ params }: { params: Promise<{ id: string
                   <p className="text-xs text-gray-300">Book a 1-day complimentary workout pass with zero obligations.</p>
                 </div>
 
-                <Button
-                  onClick={() => setTrialModalOpen(true)}
-                  className="w-full h-12 bg-[#FF5722] hover:bg-[#FF5722]/90 text-white font-bold text-sm shadow-lg shadow-[#FF5722]/30 flex items-center justify-center gap-2"
-                >
-                  <Ticket className="w-5 h-5" /> Book Free Trial Pass
-                </Button>
+                <div className="space-y-2">
+                  <Button
+                    onClick={() => setTrialModalOpen(true)}
+                    className="w-full h-11 bg-[#FF5722] hover:bg-[#FF5722]/90 text-white font-bold text-sm shadow-lg shadow-[#FF5722]/30 flex items-center justify-center gap-2"
+                  >
+                    <Ticket className="w-4 h-4" /> Book Free Trial Pass
+                  </Button>
+
+                  <Button
+                    onClick={() => setCheckoutModalOpen(true)}
+                    className="w-full h-11 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm shadow-lg shadow-emerald-600/30 flex items-center justify-center gap-2"
+                  >
+                    <CreditCard className="w-4 h-4" /> Buy Membership Plan
+                  </Button>
+                </div>
 
                 <div className="space-y-2 pt-2 border-t border-white/10 text-xs text-gray-400">
                   <p className="flex items-center gap-2 text-emerald-400 font-medium">
@@ -506,6 +526,14 @@ export default function GymDetailPage({ params }: { params: Promise<{ id: string
         onOpenChange={setTrialModalOpen}
         gymId={gym.id}
         gymName={gym.name}
+      />
+
+      {/* Membership Checkout Modal */}
+      <MembershipCheckoutModal
+        open={checkoutModalOpen}
+        onOpenChange={setCheckoutModalOpen}
+        gymName={gym.name}
+        plans={gym.plans || []}
       />
 
       {/* Floating Compare Bar */}
