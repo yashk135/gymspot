@@ -727,20 +727,40 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
       const { data: reviews } = await supabase.from('reviews').select('*').eq('gym_id', id);
       const { data: deals } = await supabase.from('gym_deals').select('*').eq('gym_id', id);
 
-      const fallbackObj = SEED_DETAILS[id] || SEED_DETAILS['g1111111-1111-1111-1111-111111111111'];
+      // Normalize plan fields: wizard saves camelCase, DB may save snake_case
+      const normalizePlan = (p: any) => ({
+        id: p.id || p.gym_id || Math.random().toString(36),
+        plan_name: p.plan_name || p.planName || 'Membership Plan',
+        duration_days: p.duration_days ?? p.durationDays ?? 30,
+        price: p.price ?? 0,
+        currency: p.currency || 'INR',
+        features: p.features || [],
+        is_best_value: p.is_best_value || false,
+      });
+
+      const fallbackObj = SEED_DETAILS[id] || null;
+      const fallbackPlans = fallbackObj?.plans || [];
+      const rawPlans = (plans && plans.length > 0) ? plans : fallbackPlans;
+      const normalizedPlans = rawPlans.map(normalizePlan);
+
+      // Derive starting_price from real plans if not set on gym row
+      const derivedStartingPrice =
+        gym.starting_price ||
+        (normalizedPlans.length > 0 ? Math.min(...normalizedPlans.map((p: any) => p.price)) : 0);
 
       return NextResponse.json({
         gym: {
           ...gym,
-          description: gym.description || fallbackObj.description,
-          photos: (photos && photos.length > 0) ? photos.map((p: any) => p.url) : fallbackObj.photos,
-          plans: (plans && plans.length > 0) ? plans : fallbackObj.plans,
-          timings: (timings && timings.length > 0) ? timings : fallbackObj.timings,
-          amenities: (amenities && amenities.length > 0) ? amenities.map((a: any) => a.amenity_name) : fallbackObj.amenities,
-          equipment: fallbackObj.equipment,
-          trainers: (trainers && trainers.length > 0) ? trainers : fallbackObj.trainers,
-          reviews: (reviews && reviews.length > 0) ? reviews : fallbackObj.reviews,
-          deals: (deals && deals.length > 0) ? deals : fallbackObj.deals,
+          starting_price: derivedStartingPrice,
+          description: gym.description || fallbackObj?.description || '',
+          photos: (photos && photos.length > 0) ? photos.map((p: any) => p.url) : (fallbackObj?.photos || []),
+          plans: normalizedPlans,
+          timings: (timings && timings.length > 0) ? timings : (fallbackObj?.timings || []),
+          amenities: (amenities && amenities.length > 0) ? amenities.map((a: any) => a.amenity_name) : (fallbackObj?.amenities || []),
+          equipment: fallbackObj?.equipment || [],
+          trainers: (trainers && trainers.length > 0) ? trainers : (fallbackObj?.trainers || []),
+          reviews: (reviews && reviews.length > 0) ? reviews : (fallbackObj?.reviews || []),
+          deals: (deals && deals.length > 0) ? deals : (fallbackObj?.deals || []),
         },
       });
     }
@@ -748,6 +768,12 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     // Fallback to seed details
   }
 
-  const fallback = SEED_DETAILS[id] || SEED_DETAILS['g1111111-1111-1111-1111-111111111111'];
-  return NextResponse.json({ gym: fallback });
+  // For newly-created gyms not in the seed dict, build a clean fallback
+  // using ONLY their own data — never substitute another gym's plans/price
+  const fallback = SEED_DETAILS[id] ?? null;
+  if (fallback) {
+    return NextResponse.json({ gym: fallback });
+  }
+  // Unknown gym ID (new listing from wizard) — return minimal empty shell
+  return NextResponse.json({ gym: null }, { status: 404 });
 }

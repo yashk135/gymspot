@@ -221,7 +221,7 @@ export default function GymDetailPage({ params }: { params: Promise<{ id: string
             <div className="text-left md:text-right shrink-0">
               <span className="text-xs text-gray-400 uppercase tracking-wider block">Starting Membership</span>
               <p className="text-3xl font-extrabold text-white font-syne">
-                {gym.currency === 'INR' ? '₹' : '$'}{gym.starting_price.toLocaleString()}
+                {gym.currency === 'INR' ? '₹' : '$'}{(gym.starting_price ?? 0).toLocaleString()}
                 <span className="text-sm text-gray-400 font-normal">/mo</span>
               </p>
             </div>
@@ -365,7 +365,7 @@ export default function GymDetailPage({ params }: { params: Promise<{ id: string
                       <div>
                         <h4 className="font-bold text-lg text-white font-syne">{plan.plan_name}</h4>
                         <p className="text-2xl font-extrabold text-[#FF5722] mt-1">
-                          {plan.currency === 'INR' ? '₹' : '$'}{plan.price.toLocaleString()}
+                          {plan.currency === 'INR' ? '₹' : '$'}{(plan.price ?? 0).toLocaleString()}
                           <span className="text-xs text-gray-400 font-normal"> / {plan.duration_days} days</span>
                         </p>
                       </div>
