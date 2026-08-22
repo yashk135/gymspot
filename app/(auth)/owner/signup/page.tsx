@@ -189,10 +189,11 @@ export default function OwnerSignupPage() {
                 <select
                   value={selectedCountry.code}
                   onChange={(e) => handleCountryChange(e.target.value)}
-                  className="w-full h-11 rounded-md bg-white/5 border border-white/10 text-white text-sm px-3 focus:outline-none focus:ring-2 focus:ring-[#FF5722]"
+                  className="w-full h-11 rounded-md bg-[#161626] border border-white/10 text-white text-sm px-3 focus:outline-none focus:ring-2 focus:ring-[#FF5722] appearance-none cursor-pointer"
+                  style={{ colorScheme: 'dark' }}
                 >
                   {COUNTRIES.map((c) => (
-                    <option key={c.code} value={c.code}>
+                    <option key={c.code} value={c.code} style={{ background: '#161626', color: '#fff' }}>
                       {c.flag} {c.name} ({c.currency})
                     </option>
                   ))}

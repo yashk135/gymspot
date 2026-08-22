@@ -50,7 +50,17 @@ export default function GymDetailPage({ params }: { params: Promise<{ id: string
       try {
         const res = await fetch(`/api/gyms/${id}`);
         const data = await res.json();
-        setGym(data.gym);
+        let gymData = data.gym;
+
+        // Merge any owner overrides saved from the Edit Listing page
+        try {
+          const overrides = JSON.parse(localStorage.getItem('gymspot_overrides') || '{}');
+          if (overrides[id]) {
+            gymData = { ...gymData, ...overrides[id] };
+          }
+        } catch {}
+
+        setGym(gymData);
       } catch {
         toast.error('Failed to load gym details');
       } finally {
@@ -58,6 +68,22 @@ export default function GymDetailPage({ params }: { params: Promise<{ id: string
       }
     }
     fetchGymDetails();
+
+    // Listen for real-time updates from the owner edit page (same device, different tab)
+    let bc: BroadcastChannel | null = null;
+    try {
+      bc = new BroadcastChannel('gymspot_gym_updates');
+      bc.onmessage = (event) => {
+        if (event.data?.gymId === id) {
+          setGym((prev: any) => prev ? { ...prev, ...event.data } : prev);
+          toast.success('🔄 Gym details updated by owner in real-time!');
+        }
+      };
+    } catch {}
+
+    return () => {
+      try { bc?.close(); } catch {}
+    };
   }, [id]);
 
   if (loading) {
