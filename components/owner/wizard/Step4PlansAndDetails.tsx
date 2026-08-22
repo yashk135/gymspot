@@ -45,26 +45,15 @@ export function Step4PlansAndDetailsComponent() {
   const [plans, setPlans] = useState<MembershipPlan[]>(
     details.plans && details.plans.length > 0
       ? (details.plans as MembershipPlan[])
-      : [
-          {
-            planName: 'Monthly General Access',
-            durationDays: 30,
-            price: 2500,
-            currency: basicInfo.country === 'India' ? 'INR' : 'USD',
-            features: ['Gym Floor Access', 'Locker Room', 'Shower'],
-            studentDiscount: true,
-            couplesPlan: false,
-            personalTrainingAvailable: true,
-          },
-        ]
+      : []
   );
 
   // New Plan Drawer Inputs
   const [newPlanName, setNewPlanName] = useState('');
   const [newDuration, setNewDuration] = useState(30);
-  const [newPrice, setNewPrice] = useState<number>(3000);
+  const [newPrice, setNewPrice] = useState<number>(0);
   const [newFeatureText, setNewFeatureText] = useState('');
-  const [newFeatures, setNewFeatures] = useState<string[]>(['Gym Floor Access', 'Locker Room']);
+  const [newFeatures, setNewFeatures] = useState<string[]>([]);
 
   // Timings State
   const [is24x7, setIs24x7] = useState<boolean>(details.is24x7 || false);
@@ -72,13 +61,13 @@ export function Step4PlansAndDetailsComponent() {
     details.timings && details.timings.length > 0
       ? (details.timings as TimingItem[])
       : [
-          { dayOfWeek: 1, dayName: 'Monday', openTime: '06:00', closeTime: '22:00', isClosed: false },
-          { dayOfWeek: 2, dayName: 'Tuesday', openTime: '06:00', closeTime: '22:00', isClosed: false },
-          { dayOfWeek: 3, dayName: 'Wednesday', openTime: '06:00', closeTime: '22:00', isClosed: false },
-          { dayOfWeek: 4, dayName: 'Thursday', openTime: '06:00', closeTime: '22:00', isClosed: false },
-          { dayOfWeek: 5, dayName: 'Friday', openTime: '06:00', closeTime: '22:00', isClosed: false },
-          { dayOfWeek: 6, dayName: 'Saturday', openTime: '07:00', closeTime: '21:00', isClosed: false },
-          { dayOfWeek: 0, dayName: 'Sunday', openTime: '08:00', closeTime: '18:00', isClosed: false },
+          { dayOfWeek: 1, dayName: 'Monday', openTime: '', closeTime: '', isClosed: false },
+          { dayOfWeek: 2, dayName: 'Tuesday', openTime: '', closeTime: '', isClosed: false },
+          { dayOfWeek: 3, dayName: 'Wednesday', openTime: '', closeTime: '', isClosed: false },
+          { dayOfWeek: 4, dayName: 'Thursday', openTime: '', closeTime: '', isClosed: false },
+          { dayOfWeek: 5, dayName: 'Friday', openTime: '', closeTime: '', isClosed: false },
+          { dayOfWeek: 6, dayName: 'Saturday', openTime: '', closeTime: '', isClosed: false },
+          { dayOfWeek: 0, dayName: 'Sunday', openTime: '', closeTime: '', isClosed: false },
         ]
   );
 
@@ -86,7 +75,7 @@ export function Step4PlansAndDetailsComponent() {
   const [amenities, setAmenities] = useState<string[]>(
     details.amenities && details.amenities.length > 0
       ? details.amenities
-      : ['AC', 'Locker Room', 'Shower', 'Free Weights', 'Cardio Zone']
+      : []
   );
 
   // Handlers for Plans
@@ -117,7 +106,8 @@ export function Step4PlansAndDetailsComponent() {
 
     setPlans([...plans, newPlan]);
     setNewPlanName('');
-    setNewFeatures(['Gym Floor Access', 'Locker Room']);
+    setNewPrice(0);
+    setNewFeatures([]);
     toast.success('Membership plan added!');
   };
 
@@ -193,6 +183,11 @@ export function Step4PlansAndDetailsComponent() {
           </div>
 
           {/* Current Plans List */}
+          {plans.length === 0 && (
+            <div className="p-6 rounded-xl border border-dashed border-white/15 text-center text-sm text-gray-500">
+              No membership plans added yet. Fill in the form below and click &ldquo;Save Plan&rdquo;.
+            </div>
+          )}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {plans.map((plan, i) => (
               <div key={i} className="p-4 rounded-xl bg-white/5 border border-white/10 space-y-3 relative group">
@@ -228,7 +223,7 @@ export function Step4PlansAndDetailsComponent() {
           {/* Add New Plan Builder Form */}
           <div className="p-4 rounded-xl bg-white/5 border border-dashed border-white/20 space-y-4">
             <h4 className="text-sm font-semibold text-white flex items-center gap-1.5">
-              <Plus className="w-4 h-4 text-[#FF5722]" /> Add Another Membership Plan
+              <Plus className="w-4 h-4 text-[#FF5722]" /> {plans.length === 0 ? 'Add Your First Membership Plan' : 'Add Another Membership Plan'}
             </h4>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               <div className="space-y-1">
